@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style type="text/css">
+        body,html{
+            background-color:#4f0404;
+            margin:0px;
+            padding:5px;
+        }
+        #board{
+            width:90%;
+        }
+        .sidePanel{
+            height:100%;
+            width:100%;
+            background-color:rgba(0, 0, 0, 0.9);
+            position:absolute;
+            z-index:99;
+            right:0px;
+            top:0px;
+           text-align:center;
+        }
+            .sidePanel .message {
+                position:absolute;
+                top:10px;
+                left:20%;
+                font-size:32px;
+                background-color:rgba(0, 0, 0, 0.66);
+                padding:20px;
+                width:60%;
+                margin-top:20px;
+                color:white;
+                text-align:center;
+                font-family:'Segoe UI','Comic Sans MS'; 
+            }
+        .stickyNote textarea{
+            resize:none;
+        } .stickyNote {
+            min-width: 200px;
+            min-height: 250px;
+            text-align: left;
+            display: inline-block;
+            width: 200px;
+            margin-left: 10px;
+            font-family: "Comic Sans MS";
+            padding-bottom: 4px;
+            vertical-align: top;
+            box-shadow: 3px 3px 6px #000000;
+            transform: rotate(-1deg);
+        }
+        .sidePanel .stickyNote {
+            margin:12% auto auto auto;
+            transform:none;
+        }
+        .sidePanel .stickyNote .content{
+           height:200px;
+        }
+        .color1:nth-child(2n+1) {
+            transform: rotate(1deg);
+        }
+        .color1:nth-child(3n+1) {
+            transform: rotate(2deg);
+        }
+        .color2:nth-child(2n+1) {
+            transform: rotate(3deg);
+        }
+         .color1 {
+            border: 1px solid #fae369;
+            background-color: #fbe77a;
+        }
+        .color2 {
+            border: 1px solid #69affa;
+            background-color: #9fc9f7;
+        }
+        .color3 {
+            border: 1px solid #f89de6;
+            background-color: #fac0ee;
+        }
+        .color4 {
+            border: 1px solid #808080;
+            background-color: #ffffff;
+        }
+        .color1 .title {
+            border: 1px solid #fae369;
+            background-color: #fbe77a;
+            box-shadow: 1px 1px 0px #eed64e;
+        }
+        .color2 .title {
+            border: 1px solid #9fc9f7;
+            background-color: #9fc9f7;
+            box-shadow: 1px 1px 0px #69affa;
+        }
+        .color3 .title {
+            border: 1px solid #fac0ee;
+            background-color: #fac0ee;
+            box-shadow: 1px 1px 0px #f694e2;
+        }
+        .color4 .title {
+            border: 1px solid #808080;
+            background-color: #ffffff;
+            box-shadow: 1px 1px 2px #808080;
+        }
+            .stickyNote .title {
+                height: 25px;
+                padding: 5px;
+                font-weight: bold;
+                position: relative;
+            }
+         .addNewButton {
+            box-shadow: 2px 2px 10px #000000;
+            border: 1px outset #0094ff;
+            position: absolute;
+            height: 55px;
+            width: 55px;
+            background-color: #183951;
+            color: white;
+            float: right;
+            right: 40px;
+            top: 30px;
+            border-radius: 40px;
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #000000;
+            text-align: center;
+            cursor: pointer;
+        }
+            .addNewButton:hover {
+                border: 1px outset #ffffff;
+                box-shadow: 2px 2px 20px #ffffff;
+                text-shadow: 1px 1px 5px #229ef8;
+                background-color: #0c70b9;
+            }
+            .stickyNote .removeButton{
+                box-shadow:3px 5px 0px #cb0b0b;
+                border:1px thin #ff0000;
+                position:absolute;
+                height:20px;
+                width:20px;
+                background-color:#ff0000;
+                color:white;
+                float:right;
+                right:40px;
+                top:-8px;
+                border-radius:40px;
+                font-size:12px;
+                text-align:center;
+                cursor:pointer;
+            }
+             
+            .stickyNote .content {
+                font-family: "Comic Sans MS";
+                background-color:transparent;
+                width:95%;
+                overflow: auto;
+                height: 240px;
+                padding: 5px;
+                border: none;
+               
+                line-height: 16px !important;
+            }
+           
+    </style>
+    <script src="jquery.min.js"></script>
+    
+</head>
+<body>
+    <div id="board">
+
+    </div>
+    <div id="addNew" class="sidePanel">
+        <div class="message">
+            Add a title and enter Notes , then press [tab] to save !.
+        </div>
+        <div class='addNewButton' style="font-family:'Segoe UI';font-size:40px;" onclick='StickyNotes.CancelAdd()'>X</div>
+        <div class='stickyNote color4' ><div class='title'><div contenteditable="true" class='text' id='n_title'></div><textarea style="margin-top:10px;" onchange='StickyNotes.AddNote()' class='content' id='n_content'></textarea></div>
+    </div></div>
+    <div class="addNewButton" onclick="StickyNotes.NewNote()">
+        +
+    </div>
+    <script type="text/javascript">
+        function onkeydown(e) {
+            alert(e);
+        }
+        lastTransform="none";
+        StickyNotes = {
+            URL: 'fileupdate.jsp',
+            GetNotes: function () {
+                var p = $.post(this.URL, {}, this.LoadNotes, "json");
+                p.done = this.LoadNotes;
+                p.error = function (d) {
+                    alert('ee' + d);
+                }
+            },
+            LoadNotes: function (d) {
+                $("#board").html("");
+                j = 1;
+                for (var i = 0; i < d.length; i++) {
+                    j = (j == 4 ? 1 : j);
+                    $("#board").append("<div class='stickyNote color" + j + "'><div class='title'><span class='text' id='t" + i + "'>" + d[i].Filename + "</span><span class='removeButton' onclick='StickyNotes.DeleteNote(" + i + ")'>X</span></div><textarea onchange='StickyNotes.UpdateNote(" + i + ")' class='content' id='c" + i + "'>" + d[i].FileContent + "</textarea></div>");
+                    j++;
+                }
+                $('.stickyNote .content').focusin(function () {
+                    $(this).css('overflow', 'auto');
+                    lastTransform = $(this).parent().css('transform');
+                    $(this).parent().css('transform', "none");
+                });
+                $('.stickyNote .content').focusout(function () {
+                    $(this).scrollTop(0);
+                    $(this).css('overflow', 'hidden');
+                    $(this).parent().css('transform', lastTransform);
+                    
+                });
+                $('.stickyNote .content').css('overflow', 'hidden');
+            },
+            UpdateNote: function (i) {
+                $.post(this.URL, { "filename": $('#t' + i).text(), "filecontent": $('#c' + i).val(), "option": "S" }, this.LoadNotes, "json");
+            },
+            NewNote: function () {
+                $('.sidePanel').show();
+               // $('.sidePanel .stickyNote').removeClass('color1').removeClass('color2').removeClass('color3').addClass('color' + j);
+                $('.sidePanel .stickyNote #n_title').text("");
+                $('.sidePanel .stickyNote #n_content').val("");
+                 
+            },
+            AddNote: function () {
+                if ($('#n_title').text() != "") {                
+                $('.sidePanel').hide();
+                $.post(this.URL, { "filename": $('#n_title').text(), "filecontent": $('#n_content').val(), "option": "S" }, this.LoadNotes, "json");
+                }
+                else {
+                    alert('Enter any title');
+                    $('#n_title').focus();
+                }
+            },
+            DeleteNote: function (i) {
+                //if (window.confirm("Do you want to destroy this Notes (" + $('#t' + i).text() + "..)") == true) {
+                    $.post(this.URL, { "filename": $('#t' + i).text(), "filecontent": $('#c' + i).val(), "option": "D" }, this.LoadNotes, "json");
+                //}
+            },
+            CancelAdd: function () {
+                $('.sidePanel').hide();
+            }
+        }
+
+
+        StickyNotes.GetNotes();
+        $('.sidePanel').hide();
+        
+    </script>
+
+</body>
+</html>
