@@ -1,0 +1,26 @@
+The attached zip file contains following required files.. 
+
+                  
+
+         1) Board.html 
+        2) fileupdate,jsp 
+        3) jquery.min 
+        
+        Place above three files in Apache Tomcat ROOT directory. 
+
+        4) stickyapp.sql 
+
+        The above file contains SQL query to create table in MYSQL 'test' database. 
+                
+        5) mysql-connector-java-5.1.23-bin.jar 
+        
+        The above file is required to make mysql connection from JSP program. So 
+        Place this file at Apace Tomcat  lib directory. 
+        
+        To change the connection string of MYSQL database, edit fileupdate.jsp and change IP-address ,Port, UserID, Password then save that file. 
+                 
+
+        
+After doing above steps, run the following url. 
+        
+                http://<tomcat-ip-address>:<tomcat-port>/board.html.
